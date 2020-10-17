@@ -6,7 +6,7 @@ namespace SpriteGenerator {
           img = new Image();
           img.onload = function() {
             resource = trimFileName(e.target.files[0].name);
-            if (!manifest[resource]) manifest[resource] = [];
+            if (!manifest[resource]) manifest[resource] = {};
             redraw();
           };
           img.src = event.target.result as string;

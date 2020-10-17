@@ -29,8 +29,7 @@ namespace SpriteGenerator {
     const name = trimFileName(prompt("Enter Sprite Name"));
 
     if (name) {
-      manifest[resource].push({ ...position, name });
-      console.log(manifest);
+      manifest[resource][name] = position;
     }
 
     redraw();
@@ -40,16 +39,20 @@ namespace SpriteGenerator {
     download((prompt("Enter a filename.") || "manifest") + ".json", JSON.stringify(manifest, null, 4));
   });
 
-  document.getElementById("copy").addEventListener("click", () => {
+  document.getElementById("sync").addEventListener("click", () => {
     const keys = Object.keys(manifest);
-    keys.splice(keys.indexOf(resource), 1);
 
-    const key = prompt("Choose what resource to copy from: " + keys.join(" | "));
+    keys.forEach((key) => {
+      const res = manifest[key];
+      const sprites = Object.keys(res);
 
-    if (keys.indexOf(key) !== -1) {
-      manifest[resource] = JSON.parse(JSON.stringify(manifest[key]));
-      console.log(manifest);
-    }
+      sprites.forEach(sp => {
+        keys.forEach(k => (manifest[k][sp] = JSON.parse(JSON.stringify(res[sp]))));
+      });
+    });
+
+    console.log(manifest);
+
   });
 
   document.getElementById("preview").addEventListener("click", () => {

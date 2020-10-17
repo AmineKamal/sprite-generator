@@ -1,14 +1,3 @@
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
 var SpriteGenerator;
 (function (SpriteGenerator) {
     function handleImage(e) {
@@ -18,7 +7,7 @@ var SpriteGenerator;
             SpriteGenerator.img.onload = function () {
                 SpriteGenerator.resource = SpriteGenerator.trimFileName(e.target.files[0].name);
                 if (!SpriteGenerator.manifest[SpriteGenerator.resource])
-                    SpriteGenerator.manifest[SpriteGenerator.resource] = [];
+                    SpriteGenerator.manifest[SpriteGenerator.resource] = {};
                 redraw();
             };
             SpriteGenerator.img.src = event.target.result;
@@ -125,22 +114,23 @@ var SpriteGenerator;
         var position = SpriteGenerator.drawHighlight();
         var name = SpriteGenerator.trimFileName(prompt("Enter Sprite Name"));
         if (name) {
-            SpriteGenerator.manifest[SpriteGenerator.resource].push(__assign(__assign({}, position), { name: name }));
-            console.log(SpriteGenerator.manifest);
+            SpriteGenerator.manifest[SpriteGenerator.resource][name] = position;
         }
         SpriteGenerator.redraw();
     });
     document.getElementById("generate").addEventListener("click", function () {
         SpriteGenerator.download((prompt("Enter a filename.") || "manifest") + ".json", JSON.stringify(SpriteGenerator.manifest, null, 4));
     });
-    document.getElementById("copy").addEventListener("click", function () {
+    document.getElementById("sync").addEventListener("click", function () {
         var keys = Object.keys(SpriteGenerator.manifest);
-        keys.splice(keys.indexOf(SpriteGenerator.resource), 1);
-        var key = prompt("Choose what resource to copy from: " + keys.join(" | "));
-        if (keys.indexOf(key) !== -1) {
-            SpriteGenerator.manifest[SpriteGenerator.resource] = JSON.parse(JSON.stringify(SpriteGenerator.manifest[key]));
-            console.log(SpriteGenerator.manifest);
-        }
+        keys.forEach(function (key) {
+            var res = SpriteGenerator.manifest[key];
+            var sprites = Object.keys(res);
+            sprites.forEach(function (sp) {
+                keys.forEach(function (k) { return (SpriteGenerator.manifest[k][sp] = JSON.parse(JSON.stringify(res[sp]))); });
+            });
+        });
+        console.log(SpriteGenerator.manifest);
     });
     document.getElementById("preview").addEventListener("click", function () {
         alert(JSON.stringify(SpriteGenerator.manifest, null, 4));

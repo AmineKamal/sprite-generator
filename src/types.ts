@@ -2,14 +2,15 @@
 namespace SpriteGenerator {
 
     export interface Manifest {
-        [key: string]: Sprite[];
+        [key: string]: Sprites;
     }
       
-    export interface Sprite {
-        name: string;
-        x: number;
-        y: number;
-        w: number;
-        h: number;
+    export interface Sprites {
+        [name: string]: {
+            x: number;
+            y: number;
+            w: number;
+            h: number;
+        }
     }
 }
