@@ -1,0 +1,29 @@
+<style>
+	h1,h2 {
+		font-family: Lato;
+	}
+
+	#app {
+		width: 100%;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		margin-top: 75px;
+	}
+
+	#inputs {
+		display: flex;
+		justify-content: space-around;
+		margin-bottom: 10px;
+	}
+</style>
+<div id="app">
+	<div id="inputs">
+		<input type="file" id="imageLoader" name="imageLoader"/>
+		<button id="generate"> Generate </button>
+		<button id="copy"> Copy </button>
+		<button id="preview"> Preview </button>
+	</div>
+	<canvas id="imageCanvas"></canvas>
+</div>
+<script src="index.js"></script>
