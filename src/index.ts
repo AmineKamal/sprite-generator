@@ -37,7 +37,7 @@ namespace SpriteGenerator {
   });
 
   document.getElementById("generate").addEventListener("click", () => {
-    download("manifest.json", JSON.stringify(manifest, null, 4));
+    download((prompt("Enter a filename.") || "manifest") + ".json", JSON.stringify(manifest, null, 4));
   });
 
   document.getElementById("copy").addEventListener("click", () => {

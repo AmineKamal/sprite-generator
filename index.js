@@ -131,7 +131,7 @@ var SpriteGenerator;
         SpriteGenerator.redraw();
     });
     document.getElementById("generate").addEventListener("click", function () {
-        SpriteGenerator.download("manifest.json", JSON.stringify(SpriteGenerator.manifest, null, 4));
+        SpriteGenerator.download((prompt("Enter a filename.") || "manifest") + ".json", JSON.stringify(SpriteGenerator.manifest, null, 4));
     });
     document.getElementById("copy").addEventListener("click", function () {
         var keys = Object.keys(SpriteGenerator.manifest);
