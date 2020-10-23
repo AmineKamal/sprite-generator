@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "serve",
-    "build": "tsc --outFile index.js src/index.ts"
+    "build": "tsc --outFile index.js src/index.ts --target esnext"
   },
   "dependencies": {},
   "devDependencies": {

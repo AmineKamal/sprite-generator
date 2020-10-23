@@ -1,29 +1,210 @@
-<style>
-	h1,h2 {
-		font-family: Lato;
-	}
+<!doctype html>
+<html lang="en">
+	<head>
+		<!-- Required meta tags -->
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-	#app {
-		width: 100%;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		margin-top: 75px;
-	}
+		<!-- Bootstrap CSS -->
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" integrity="sha512-+4zCK9k+qNFUR5X+cKL9EIR+ZOhtIloNl9GIKS57V1MyNsYpYcUrUeQc9vNfzsWfV28IaLL3i96P9sdNyeRssA==" crossorigin="anonymous" />
 
-	#inputs {
-		display: flex;
-		justify-content: space-around;
-		margin-bottom: 10px;
-	}
-</style>
-<div id="app">
-	<div id="inputs">
-		<input type="file" id="imageLoader" name="imageLoader"/>
-		<button id="generate"> Generate </button>
-		<button id="sync"> Sync </button>
-		<button id="preview"> Preview </button>
-	</div>
-	<canvas id="imageCanvas"></canvas>
-</div>
-<script src="index.js"></script>
+		<title>Sprite Generation Tool</title>
+	</head>
+	<style>
+		h1,h2 {
+			font-family: Lato;
+		}
+
+		input,button{
+			margin-right: 5px;
+		}
+
+		body {
+			width: 100%;
+			display: flex;
+		}
+
+		#saved-templates {
+			width: 20%;
+			display: flex;
+			margin: 0;
+			margin: 25px;
+			height: fit-content;
+		}
+
+		#app {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			margin: 25px;
+		}
+
+		#inputs {
+			width: 900px;
+			flex-direction: row;
+			display: flex;
+			justify-content: space-around;
+			align-items: center;
+			padding: 10px;
+			margin-bottom: 10px;
+		}
+
+		.card-header {
+			display: flex;
+			flex-direction: row;
+			justify-content: space-between;
+			align-items: center;
+			width: 100%;
+		}
+
+		.clickable {
+			cursor: pointer;
+		}
+
+		#files-view {
+			display: flex !important;
+			width: 900px !important;
+			justify-content: flex-start !important;
+			flex-wrap: wrap !important;
+			flex-direction: row;
+			min-height: 30px;
+		}
+
+		#minimize-files-view {
+			position: absolute;
+			right: 0px;
+			top: -4px;
+			z-index: 99;
+			cursor: pointer;
+		}
+
+		#minimize-files-view i {
+			color: white;
+		}
+
+		.file-card {
+			width: 208px;
+			height: 150px;
+			color: white;
+			background-color: slateblue;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			margin: 5px 4.5px 5px 4.5px;
+			text-align: center;
+			cursor: pointer;
+		}
+	</style>
+	<body>
+		<div id="saved-templates" class="card">
+			<div class="card-header">
+				Saved Templates
+				<button id="new-template" class="btn btn-primary"> <i class="fas fa-plus"></i></button>
+			</div>
+			<ul id="templates" class="list-group list-group-flush">
+			</ul>
+		</div>
+		<div id="app">
+			<div id="inputs" class="card">
+				<input type="text" id="cell-x" placeholder="Cell Width" class="form-control" />
+				<input type="text" id="cell-y" placeholder="Cell Height" class="form-control" />
+				<input type="file" id="imageLoader" name="imageLoader" multiple hidden />
+				<button onclick="document.getElementById('imageLoader').click();" class="btn btn-primary"> Upload <i class="fas fa-upload"></i></button>
+				<button id="generate" class="btn btn-primary"> Generate <i class="fas fa-download"></i></button>
+				<button id="sync" class="btn btn-primary"> Sync <i class="fas fa-sync"></i> </button>
+				<button id="preview" class="btn btn-primary"> Preview <i class="fas fa-search"></i> </button>
+				<button id="save" class="btn btn-primary"> Save <i class="fas fa-save"></i> </button>
+			</div>
+			<div id="files-view" class="card">
+			</div>
+			<canvas width="0" height="0" id="imageCanvas"></canvas>
+		</div>
+
+		
+
+		<button id="confirm-button" type="button" class="btn btn-primary" data-toggle="modal" data-target="#confirm" hidden>
+		</button>
+		  
+		  <!-- Modal -->
+		  <div class="modal fade" id="confirm" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-scrollable modal-lg">
+			  <div class="modal-content">
+				<div class="modal-header">
+				  <h5 class="modal-title" id="confirm-title">Modal title</h5>
+				  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				  </button>
+				</div>
+				<div id="confirm-body" class="modal-body">
+				  ...
+				</div>
+				<div class="modal-footer">
+				  <button id="confirm-confirm" type="button" class="btn btn-primary" data-dismiss="modal">YES</button>
+				  <button id="confirm-close" type="button" class="btn btn-secondary" data-dismiss="modal">NO</button>
+				</div>
+			  </div>
+			</div>
+		  </div>
+
+		<button id="alert-button" type="button" class="btn btn-primary" data-toggle="modal" data-target="#alert" hidden>
+		</button>
+		  
+		<!-- Modal -->
+		<div class="modal fade" id="alert" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-scrollable modal-lg">
+			<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="alert-title">Modal title</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div id="alert-body" class="modal-body">
+				...
+			</div>
+			<div class="modal-footer">
+				<button id="alert-close" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+			</div>
+			</div>
+		</div>
+		</div>
+
+		<button id="prompt-button" type="button" class="btn btn-primary" data-toggle="modal" data-target="#prompt" hidden>
+		</button>
+		  
+		<!-- Modal -->
+		<div class="modal fade" id="prompt" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-scrollable modal-lg">
+			<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="prompt-title">Modal title</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div id="prompt-body" class="modal-body">
+				<textarea id="prompt-textarea" style="width: 100%;"></textarea>
+			</div>
+			<div class="modal-footer">
+				<button id="prompt-close" type="button" class="btn btn-secondary" data-dismiss="modal">Submit</button>
+			</div>
+			</div>
+		</div>
+		</div>
+
+		<!-- Optional JavaScript; choose one of the two! -->
+
+		<!-- Option 1: jQuery and Bootstrap Bundle (includes Popper) -->
+		<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+
+		<!-- Option 2: jQuery, Popper.js, and Bootstrap JS
+		<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+		<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js" integrity="sha384-w1Q4orYjBQndcko6MimVbzY0tgp4pWB4lZ7lr30WKz0vr/aWKhXdBNmNb5D92v7s" crossorigin="anonymous"></script>
+		-->
+
+		<script src="index.js"></script>
+	</body>
+</html>
