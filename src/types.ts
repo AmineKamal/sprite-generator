@@ -16,14 +16,20 @@ namespace SpriteGenerator.Types {
         h: number;
     }
 
-    export function isSprites(obj: any): obj is Sprites {
+    export function isManifest(obj: any): obj is Manifest {
         const keys = Object.keys(obj);
-
-        console.log(obj);
 
         if (keys.some(k => typeof k !== "string")) return false;
 
-        console.log("KEYS");
+        if (keys.some(k => !isSprites(obj[k]))) return false;
+
+        return true;
+    }
+
+    export function isSprites(obj: any): obj is Sprites {
+        const keys = Object.keys(obj);
+
+        if (keys.some(k => typeof k !== "string")) return false;
 
         if (keys.some(k => !isSpriteLocation(obj[k]))) return false;
 
@@ -31,8 +37,6 @@ namespace SpriteGenerator.Types {
     }
 
     export function isSpriteLocation(obj: any): obj is SpriteLocation {
-        console.log(obj);
-
         return (
             typeof obj === "object" && 
             typeof obj.x === "number" && 

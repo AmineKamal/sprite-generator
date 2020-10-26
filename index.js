@@ -97,19 +97,25 @@ var SpriteGenerator;
 (function (SpriteGenerator) {
     var Types;
     (function (Types) {
-        function isSprites(obj) {
+        function isManifest(obj) {
             const keys = Object.keys(obj);
-            console.log(obj);
             if (keys.some(k => typeof k !== "string"))
                 return false;
-            console.log("KEYS");
+            if (keys.some(k => !isSprites(obj[k])))
+                return false;
+            return true;
+        }
+        Types.isManifest = isManifest;
+        function isSprites(obj) {
+            const keys = Object.keys(obj);
+            if (keys.some(k => typeof k !== "string"))
+                return false;
             if (keys.some(k => !isSpriteLocation(obj[k])))
                 return false;
             return true;
         }
         Types.isSprites = isSprites;
         function isSpriteLocation(obj) {
-            console.log(obj);
             return (typeof obj === "object" &&
                 typeof obj.x === "number" &&
                 typeof obj.y === "number" &&
@@ -270,7 +276,13 @@ var SpriteGenerator;
         }
         Storage.load = load;
         async function upload(key, str) {
-            const template = JSON.parse(str);
+            let template;
+            try {
+                template = JSON.parse(str);
+            }
+            catch (e) {
+                return SpriteGenerator.Alerts.alertModal("ERROR", "The supplied template is not valid");
+            }
             if (!SpriteGenerator.Types.isSprites(template))
                 return SpriteGenerator.Alerts.alertModal("ERROR", "The supplied template is not valid");
             Storage.templates[key] = template;
@@ -450,6 +462,23 @@ var SpriteGenerator;
             return;
         await SpriteGenerator.Storage.upload(name, content);
         SpriteGenerator.Dom.fillTemplates();
+    });
+    (document.getElementById("manifestLoader")).addEventListener("change", async (e) => {
+        const file = e.target.files[0];
+        const fr = new FileReader();
+        fr.onload = async (ev) => {
+            let manifest;
+            try {
+                manifest = JSON.parse(ev.target.result);
+            }
+            catch (e) {
+                return SpriteGenerator.Alerts.alertModal("ERROR", "The supplied file is not valid");
+            }
+            if (!SpriteGenerator.Types.isManifest(manifest))
+                return SpriteGenerator.Alerts.alertModal("ERROR", "The supplied template is not valid");
+            SpriteGenerator.Globals.manifest = manifest;
+        };
+        fr.readAsText(file);
     });
     SpriteGenerator.Dom.fillTemplates();
 })(SpriteGenerator || (SpriteGenerator = {}));

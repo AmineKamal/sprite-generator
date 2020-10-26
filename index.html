@@ -26,7 +26,7 @@
 		}
 
 		#saved-templates {
-			width: 20%;
+			width: 375px;
 			display: flex;
 			margin: 0;
 			margin: 25px;
@@ -41,7 +41,7 @@
 		}
 
 		#inputs {
-			width: 900px;
+			width: 1000px;
 			flex-direction: row;
 			display: flex;
 			justify-content: space-around;
@@ -64,7 +64,7 @@
 
 		#files-view {
 			display: flex !important;
-			width: 900px !important;
+			width: 1000px !important;
 			justify-content: flex-start !important;
 			flex-wrap: wrap !important;
 			flex-direction: row;
@@ -84,7 +84,7 @@
 		}
 
 		.file-card {
-			width: 208px;
+			width: 233px;
 			height: 150px;
 			color: white;
 			background-color: slateblue;
@@ -109,9 +109,11 @@
 			<div id="inputs" class="card">
 				<input type="text" id="cell-x" placeholder="Cell Width" class="form-control" />
 				<input type="text" id="cell-y" placeholder="Cell Height" class="form-control" />
-				<input type="file" id="imageLoader" name="imageLoader" multiple hidden />
+				<input type="file" id="imageLoader" name="imageLoader" accept=".jpg,.jpeg,.png" multiple hidden />
 				<button onclick="document.getElementById('imageLoader').click();" class="btn btn-primary"> Upload <i class="fas fa-upload"></i></button>
 				<button id="generate" class="btn btn-primary"> Generate <i class="fas fa-download"></i></button>
+				<input type="file" id="manifestLoader" accept=".json" hidden />
+				<button onclick="document.getElementById('manifestLoader').click();" class="btn btn-primary"> Edit <i class="fas fa-pencil-alt"></i></button>
 				<button id="sync" class="btn btn-primary"> Sync <i class="fas fa-sync"></i> </button>
 				<button id="preview" class="btn btn-primary"> Preview <i class="fas fa-search"></i> </button>
 				<button id="save" class="btn btn-primary"> Save <i class="fas fa-save"></i> </button>

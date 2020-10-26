@@ -88,5 +88,26 @@ namespace SpriteGenerator {
     Dom.fillTemplates();
   });
 
+  (document.getElementById("manifestLoader")).addEventListener("change", async (e: any) => {
+    const file: File = e.target.files[0];
+
+    const fr = new FileReader();
+
+    fr.onload = async (ev) => {
+		let manifest: any;
+		try {
+			manifest = JSON.parse(ev.target.result as string);
+		} catch(e) {
+			return Alerts.alertModal("ERROR", "The supplied file is not valid");
+		}
+
+		if (!Types.isManifest(manifest)) return Alerts.alertModal("ERROR", "The supplied template is not valid");
+
+		Globals.manifest = manifest;
+    };
+
+    fr.readAsText(file);
+  });
+
   Dom.fillTemplates();
 }

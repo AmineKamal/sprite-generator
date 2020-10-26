@@ -6,7 +6,13 @@ namespace SpriteGenerator.Storage {
     }
 
     export async function upload(key: string, str: string) {
-        const template = JSON.parse(str);
+        let template: any;
+        try {
+            template = JSON.parse(str);
+        }
+        catch (e) {
+            return Alerts.alertModal("ERROR", "The supplied template is not valid");
+        }
 
         if (!Types.isSprites(template)) return Alerts.alertModal("ERROR", "The supplied template is not valid");
         templates[key] = template;
